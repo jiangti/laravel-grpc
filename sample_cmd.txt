@@ -1,0 +1,1 @@
+grpcurl -plaintext --import-path ./protos/identity -proto auth.proto -d '{"email":"email@email.com","name":"Mortar Mario","password":"Mortar","password_confirmation":"Mortar"}' "localhost:9090" protobuf.identity.AuthService/Register
