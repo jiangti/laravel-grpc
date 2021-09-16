@@ -8,9 +8,7 @@ WORKDIR /app
 
 COPY . .
 
-RUN composer install --no-ansi --no-dev --no-interaction --no-plugins --no-progress --no-scripts --no-suggest
-
-RUN ls
+RUN composer install --no-ansi --no-dev --no-interaction --no-plugins --no-progress --no-scripts --no-suggest --optimize-autoloader
 
 #
 # Build rr-grpc and protoc-gen-php-grpc
@@ -32,7 +30,6 @@ COPY --from=vendor /app .
 
 RUN apk add git protobuf-dev make
 RUN make go-install-deps
-
 
 RUN bash vendor/spiral/php-grpc/build.sh build Linux linux amd64
 RUN bash vendor/spiral/php-grpc/build.sh build_protoc Linux linux amd64
@@ -57,7 +54,9 @@ WORKDIR /var/www
 
 RUN docker-php-ext-install pdo_mysql bcmath
 
-COPY --from=golang /app .
+COPY --from=golang /app/vendor .
+COPY --from=golang /app/generated .
+COPY --from=golang /app/protos .
 
 RUN apk del .build-deps
 

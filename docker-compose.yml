@@ -6,10 +6,8 @@ services:
       context: .
       dockerfile: Dockerfile
       target: golang
-    env_file: 
-      - .env
-    # volumes:
-      # - ./:/app
+    volumes:
+      - ./generated:/app/generated
     extra_hosts:
       - "dockerhost:$DOCKERHOST"  
     command: top
