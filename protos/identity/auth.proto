@@ -2,10 +2,18 @@ syntax = "proto3";
 
 package protobuf.identity;
 
+import "google/api/annotations.proto";
+
 option php_metadata_namespace = "Protobuf\\Identity\\Metadata";
 
 service AuthService {
-    rpc Register (RegisterRequest) returns (RegisterResponse) {}
+    rpc Register (RegisterRequest) returns (RegisterResponse) {
+
+option (google.api.http) = {
+      post: "/v1/sayhello"
+      body: "*"
+    };
+}
     rpc Login (LoginRequest) returns (UserResponse) {}
     rpc UserByEmail (UserByEmailRequest) returns (UserResponse) {}
     rpc UserById (UserByIdRequest) returns (UserResponse) {}

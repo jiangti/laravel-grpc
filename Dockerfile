@@ -8,7 +8,9 @@ WORKDIR /app
 
 COPY . .
 
-RUN composer install --no-ansi --no-dev --no-interaction --no-plugins --no-progress --no-scripts --no-suggest --optimize-autoloader
+RUN composer install --no-ansi --no-dev --no-interaction --no-plugins --no-progress --no-scripts --no-suggest
+
+RUN ls
 
 #
 # Build rr-grpc and protoc-gen-php-grpc
@@ -28,16 +30,20 @@ WORKDIR /app
 
 COPY --from=vendor /app .
 
+RUN apk add git protobuf-dev make
+RUN make go-install-deps
+
+
 RUN bash vendor/spiral/php-grpc/build.sh build Linux linux amd64
 RUN bash vendor/spiral/php-grpc/build.sh build_protoc Linux linux amd64
 
-RUN protoc --plugin=./vendor/spiral/php-grpc/protoc-gen-php-grpc --php_out=./generated --php-grpc_out=./generated protos/**/*.proto
+RUN protoc -I . -I ./third_party/googleapis --plugin=./vendor/spiral/php-grpc/protoc-gen-php-grpc --php_out=./generated  --openapiv2_out=:.  --php-grpc_out=./generated protos/**/*.proto
 
 #
 # Build app image
 #
 
-FROM php:7.3-zts-alpine
+FROM php:7.3-zts-alpine as webserver
 
 RUN apk add --update --no-cache --virtual .build-deps \
         curl \

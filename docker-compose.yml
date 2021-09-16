@@ -1,12 +1,28 @@
-version: '3'
+version: '3.4'
 
 services:
+  go:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: golang
+    env_file: 
+      - .env
+    # volumes:
+      # - ./:/app
+    extra_hosts:
+      - "dockerhost:$DOCKERHOST"  
+    command: top
+
   webserver:
-    build: .
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: webserver
     env_file: 
       - .env
     volumes:
-      - ./:/app
+      - ./:/var/www
     ports:
       - "9090:9001"
     extra_hosts:
