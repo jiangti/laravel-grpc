@@ -8,6 +8,8 @@ services:
       target: golang
     volumes:
       - ./generated:/app/generated
+      - ./protos:/app/protos
+      - ./third_party:/app/third_party
     extra_hosts:
       - "dockerhost:$DOCKERHOST"  
     command: top
