@@ -64,3 +64,16 @@ RUN apk del .build-deps
 # EXPOSE 9001 
 
 CMD ["vendor/spiral/php-grpc/rr-grpc", "serve", "-v", "-d"]
+
+
+##############################################
+#swagger ui
+###############################################
+
+FROM swaggerapi/swagger-ui:latest as swagger-ui
+
+WORKDIR /app
+
+COPY ./generated .
+
+WORKDIR /

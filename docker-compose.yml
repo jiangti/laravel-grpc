@@ -27,3 +27,30 @@ services:
       - "9090:9001"
     extra_hosts:
       - "dockerhost:$DOCKERHOST"
+
+  swagger-ui:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: swagger-ui
+    volumes:
+      - ./generated:/app/generated
+    environment:
+      BASE_URL: /swagger
+      SWAGGER_JSON: /app/generated/protos/workorders/work_order.swagger.json
+    # ports:
+    #   - "8081:8080"
+    networks:
+      - traefik_proxy
+    labels:
+        - "traefik.enable=true"
+        - "traefik.http.routers.bsafe_wo_swagger.rule=Host(`cbre.wo_swagger`)"
+        - "traefik.http.routers.bsafe_wo_swagger.entrypoints=web"
+        - "traefik.http.services.bsafe_wo_swagger.loadbalancer.server.port=8080"
+    
+networks:
+  traefik_proxy:
+    external:
+      name: traefik_default
+  default:
+    driver: bridge
